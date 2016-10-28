@@ -1,6 +1,6 @@
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="org.esme.bilgin.sumatra" version="0.0.1">
   <name>Sumatra</name>
-  <description>Bilgin's Very First Phaser Game :)</description>
+  <description>Bilgin's First Phaser Game :)</description>
   <author href="http://phonegap.com" email="support@phonegap.com">PhoneGap Team</author>
   <content src="index.html"/>
   <preference name="DisallowOverscroll" value="true"/>
