@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{265441B2-683C-46DC-BD47-097918F970F2}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin</OutputPath>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="build\assets\images\Bang.png" />
+    <Content Include="build\assets\images\BGLives.png" />
+    <Content Include="build\assets\images\BGPoints.png" />
+    <Content Include="build\assets\images\Boom.png" />
+    <Content Include="build\assets\images\Bushes.png" />
+    <Content Include="build\assets\images\Cannon.png" />
+    <Content Include="build\assets\images\CloudLarge.png" />
+    <Content Include="build\assets\images\CloudSmall.png" />
+    <Content Include="build\assets\images\ExplosionWithBoom.png" />
+    <Content Include="build\assets\images\Fireball.png" />
+    <Content Include="build\assets\images\GameOver.png" />
+    <Content Include="build\assets\images\Ground0.png" />
+    <Content Include="build\assets\images\Ground1.png" />
+    <Content Include="build\assets\images\Ground2.png" />
+    <Content Include="build\assets\images\Ground3.png" />
+    <Content Include="build\assets\images\Jeep.png" />
+    <Content Include="build\assets\images\JeepFoo.png" />
+    <Content Include="build\assets\images\Sky.png" />
+    <Content Include="build\assets\images\VolcanoCrest.png" />
+    <Content Include="build\assets\images\VolcanoSmoke.png" />
+    <Content Include="build\assets\images\Welcome.png" />
+    <Content Include="build\assets\sounds\bazooka.wav" />
+    <Content Include="build\assets\sprites\FireballSprite.png" />
+    <Content Include="build\assets\sprites\JeepExplosion.png" />
+    <Content Include="build\assets\sprites\RhinoSpriteSheet.png" />
+    <Content Include="build\styles\default.css" />
+    <Content Include="build\assets\sprites\level01-sprites.png" />
+    <Content Include="build\assets\ui\gameLogo.png" />
+    <Content Include="build\assets\ui\titlePage.png" />
+    <Content Include="build\game.js" />
+    <Content Include="build\index.html" />
+    <Content Include="build\libs\phaser.min.js" />
+    <Content Include="web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="build\game.js.map" />
+    <Content Include="build\assets\sounds\click.ogg" />
+    <Content Include="build\assets\sprites\level01-sprites.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="src\game.ts" />
+    <TypeScriptCompile Include="src\gameObjects\gameOver.ts" />
+    <TypeScriptCompile Include="src\gameObjects\fireball.ts" />
+    <TypeScriptCompile Include="src\gameObjects\cloud.ts" />
+    <TypeScriptCompile Include="src\gameObjects\cannon.ts" />
+    <TypeScriptCompile Include="src\gameObjects\billboard.ts" />
+    <TypeScriptCompile Include="src\gameObjects\rhino.ts" />
+    <TypeScriptCompile Include="src\gameObjects\jeepFoo.ts" />
+    <TypeScriptCompile Include="src\gameObjects\volcano.ts" />
+    <TypeScriptCompile Include="src\gameObjects\jeep.ts" />
+    <TypeScriptCompile Include="src\gameObjects\player.ts" />
+    <TypeScriptCompile Include="src\gameStates\boot.ts" />
+    <TypeScriptCompile Include="src\gameStates\action.ts" />
+    <TypeScriptCompile Include="src\gameStates\level01.ts" />
+    <TypeScriptCompile Include="src\gameStates\mainMenu.ts" />
+    <TypeScriptCompile Include="src\gameStates\preloader.ts" />
+    <TypeScriptCompile Include="tsDefinitions\p2.d.ts" />
+    <TypeScriptCompile Include="tsDefinitions\phaser.comments.d.ts" />
+    <TypeScriptCompile Include="tsDefinitions\pixi.comments.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="build\assets\sprites\FireballSprite.json" />
+    <Content Include="build\assets\sprites\JeepExplosion.json" />
+    <Content Include="build\assets\sprites\RhinoSpriteSheet.json" />
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>FirstPhaser</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets')" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>50494</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:50494/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>
+    </TypeScriptModuleKind>
+    <TypeScriptOutFile>build/game.js</TypeScriptOutFile>
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+</Project>

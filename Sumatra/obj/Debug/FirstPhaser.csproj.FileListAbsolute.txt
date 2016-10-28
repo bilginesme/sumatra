@@ -1,0 +1,6 @@
+C:\Users\Bilgin\Desktop\FirstPhaser\FirstPhaser\bin\FirstPhaser.dll.config
+C:\Users\Bilgin\Desktop\FirstPhaser\FirstPhaser\bin\FirstPhaser.dll
+C:\Users\Bilgin\Desktop\FirstPhaser\FirstPhaser\bin\FirstPhaser.pdb
+C:\Users\Bilgin\Desktop\FirstPhaser\FirstPhaser\obj\Debug\FirstPhaser.csprojResolveAssemblyReference.cache
+C:\Users\Bilgin\Desktop\FirstPhaser\FirstPhaser\obj\Debug\FirstPhaser.dll
+C:\Users\Bilgin\Desktop\FirstPhaser\FirstPhaser\obj\Debug\FirstPhaser.pdb

@@ -1,0 +1,68 @@
+{"frames": [
+
+{
+	"filename": "RhinoStanding0.png",
+	"frame": {"x":0,"y":0,"w":141,"h":105},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":105},
+	"sourceSize": {"w":141,"h":105}
+},
+{
+	"filename": "RhinoStanding1.png",
+	"frame": {"x":141,"y":0,"w":141,"h":105},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":105},
+	"sourceSize": {"w":141,"h":105}
+},
+{
+	"filename": "RhinoStanding2.png",
+	"frame": {"x":282,"y":0,"w":141,"h":105},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":105},
+	"sourceSize": {"w":141,"h":105}
+},
+{
+	"filename": "RhinoStanding3.png",
+	"frame": {"x":423,"y":0,"w":141,"h":105},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":105},
+	"sourceSize": {"w":141,"h":105}
+},
+{
+	"filename": "RhinoWalkingAnim0.png",
+	"frame": {"x":564,"y":0,"w":141,"h":105},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":105},
+	"sourceSize": {"w":141,"h":105}
+},
+{
+	"filename": "RhinoWalkingAnim1.png",
+	"frame": {"x":705,"y":0,"w":141,"h":105},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":105},
+	"sourceSize": {"w":141,"h":105}
+},
+{
+	"filename": "RhinoWalkingAnim2.png",
+	"frame": {"x":846,"y":0,"w":141,"h":105},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":105},
+	"sourceSize": {"w":141,"h":105}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "RhinoSpriteSheet.png",
+	"format": "RGBA8888",
+	"size": {"w":987,"h":105},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ce63d12bb71e6c9d6fdce37556e8e99a:ca5b9e4a0df1f509d28bffac68c3e223:3eb28170be485775daa685386b90cdc4$"
+}
+}

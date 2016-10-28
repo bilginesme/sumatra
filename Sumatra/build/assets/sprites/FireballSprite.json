@@ -1,0 +1,60 @@
+{"frames": [
+
+{
+	"filename": "Fireball1.png",
+	"frame": {"x":0,"y":0,"w":190,"h":416},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":190,"h":416},
+	"sourceSize": {"w":190,"h":416}
+},
+{
+	"filename": "Fireball2.png",
+	"frame": {"x":190,"y":0,"w":190,"h":416},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":190,"h":416},
+	"sourceSize": {"w":190,"h":416}
+},
+{
+	"filename": "Fireball3.png",
+	"frame": {"x":380,"y":0,"w":190,"h":416},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":190,"h":416},
+	"sourceSize": {"w":190,"h":416}
+},
+{
+	"filename": "Fireball4.png",
+	"frame": {"x":570,"y":0,"w":190,"h":416},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":190,"h":416},
+	"sourceSize": {"w":190,"h":416}
+},
+{
+	"filename": "Fireball5.png",
+	"frame": {"x":760,"y":0,"w":190,"h":416},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":190,"h":416},
+	"sourceSize": {"w":190,"h":416}
+},
+{
+	"filename": "Fireball6.png",
+	"frame": {"x":950,"y":0,"w":190,"h":416},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":190,"h":416},
+	"sourceSize": {"w":190,"h":416}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "FireballSprite.png",
+	"format": "RGBA8888",
+	"size": {"w":1140,"h":416},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:d0480fa9899fda0641817270e9d71244:b483c762caf5ecba336e0af23420e3ca:128104e3a7783943410efd9074c4b8e5$"
+}
+}
