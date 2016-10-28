@@ -47,6 +47,7 @@
     <Content Include="build\assets\sprites\FireballSprite.png" />
     <Content Include="build\assets\sprites\JeepExplosion.png" />
     <Content Include="build\assets\sprites\RhinoSpriteSheet.png" />
+    <Content Include="build\icon.png" />
     <Content Include="build\styles\default.css" />
     <Content Include="build\assets\sprites\level01-sprites.png" />
     <Content Include="build\assets\ui\gameLogo.png" />
@@ -54,6 +55,7 @@
     <Content Include="build\game.js" />
     <Content Include="build\index.html" />
     <Content Include="build\libs\phaser.min.js" />
+    <Content Include="config.xml" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
