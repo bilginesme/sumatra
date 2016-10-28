@@ -4,3 +4,9 @@ C:\Users\Bilgin\Desktop\Sumatra\Sumatra\bin\Sumatra.pdb
 C:\Users\Bilgin\Desktop\Sumatra\Sumatra\obj\Debug\Sumatra.csprojResolveAssemblyReference.cache
 C:\Users\Bilgin\Desktop\Sumatra\Sumatra\obj\Debug\Sumatra.dll
 C:\Users\Bilgin\Desktop\Sumatra\Sumatra\obj\Debug\Sumatra.pdb
+C:\Users\Bilgin\Source\Repos\Sumatra\Sumatra\bin\Sumatra.dll.config
+C:\Users\Bilgin\Source\Repos\Sumatra\Sumatra\bin\Sumatra.dll
+C:\Users\Bilgin\Source\Repos\Sumatra\Sumatra\bin\Sumatra.pdb
+C:\Users\Bilgin\Source\Repos\Sumatra\Sumatra\obj\Debug\Sumatra.csprojResolveAssemblyReference.cache
+C:\Users\Bilgin\Source\Repos\Sumatra\Sumatra\obj\Debug\Sumatra.dll
+C:\Users\Bilgin\Source\Repos\Sumatra\Sumatra\obj\Debug\Sumatra.pdb

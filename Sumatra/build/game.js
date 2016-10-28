@@ -19,7 +19,7 @@ var FirstPhaser;
                 this.state.start('Boot');
             }
             return GameEngine;
-        })(Phaser.Game);
+        }(Phaser.Game));
         Client.GameEngine = GameEngine;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
@@ -30,45 +30,154 @@ var FirstPhaser;
 (function (FirstPhaser) {
     var Client;
     (function (Client) {
-        (function (BillboardTypeEnum) {
-            BillboardTypeEnum[BillboardTypeEnum["Lives"] = 0] = "Lives";
-            BillboardTypeEnum[BillboardTypeEnum["Points"] = 1] = "Points";
-        })(Client.BillboardTypeEnum || (Client.BillboardTypeEnum = {}));
-        var BillboardTypeEnum = Client.BillboardTypeEnum;
-        var Billboard = (function (_super) {
-            __extends(Billboard, _super);
-            function Billboard(game, pos, billboardType) {
-                if (billboardType == BillboardTypeEnum.Lives)
-                    _super.call(this, game, pos.x, pos.y, 'imgBGLives');
-                else
-                    _super.call(this, game, pos.x, pos.y, 'imgBGPoints');
+        var GameOver = (function (_super) {
+            __extends(GameOver, _super);
+            function GameOver(game) {
+                _super.call(this, game, game.width / 2, game.height / 2, 'imgGameOver');
                 game.add.existing(this);
                 this.anchor.set(0.5);
-                this.txt = this.game.add.text(pos.x + 20, pos.y, "", { font: "bold 32px Arial", fill: "#FFFFFF", align: "center" });
-                this.txt.anchor.setTo(0.5);
-                this.value = 0;
+                this.visible = false;
             }
-            Billboard.prototype.update = function () {
+            GameOver.prototype.update = function () {
             };
-            Billboard.prototype.enlarge = function () {
-                var normEnlarge = 300;
-                var durationEnlarge = normEnlarge + normEnlarge * 0.25 * (Math.random() - 0.5);
-                var normShrink = 500;
-                var durationShrink = normShrink + normShrink * 0.25 * (Math.random() - 0.5);
-                var tween = this.game.add.tween(this.scale).to({ x: 1.1, y: 1.1 }, durationEnlarge, Phaser.Easing.Bounce.In, true);
+            GameOver.prototype.showAndAnimate = function () {
+                this.scale.setTo(0.5, 0.5);
+                this.visible = true;
+                var durationEnlarge = 500;
+                var durationShrink = 1000;
+                var tween = this.game.add.tween(this.scale).to({ x: 1.2, y: 1.2 }, durationEnlarge, Phaser.Easing.Cubic.In, true);
                 tween.onComplete.add(function () { this.game.add.tween(this.scale).to({ x: 1, y: 1 }, durationShrink, Phaser.Easing.Elastic.Out, true); }, this);
-                var tweenText = this.game.add.tween(this.txt.scale).to({ x: 1.1, y: 1.1 }, durationEnlarge, Phaser.Easing.Bounce.In, true);
-                tweenText.onComplete.add(function () { this.game.add.tween(this.txt.scale).to({ x: 1, y: 1 }, durationShrink, Phaser.Easing.Elastic.Out, true); }, this);
             };
-            Billboard.prototype.changeValue = function (newValue, isAnimate) {
-                this.value = newValue;
-                this.txt.setText(this.value.toString());
-                if (isAnimate)
-                    this.enlarge();
+            return GameOver;
+        }(Phaser.Sprite));
+        Client.GameOver = GameOver;
+    })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
+})(FirstPhaser || (FirstPhaser = {}));
+var FirstPhaser;
+(function (FirstPhaser) {
+    var Client;
+    (function (Client) {
+        var PhaseEnum;
+        (function (PhaseEnum) {
+            PhaseEnum[PhaseEnum["Idle"] = 0] = "Idle";
+            PhaseEnum[PhaseEnum["GoingUp"] = 1] = "GoingUp";
+            PhaseEnum[PhaseEnum["FallingDown"] = 2] = "FallingDown";
+        })(PhaseEnum || (PhaseEnum = {}));
+        var Fireball = (function (_super) {
+            __extends(Fireball, _super);
+            function Fireball(game, x, y) {
+                _super.call(this, game, x, y, 'FireballSprite', 1);
+                this.timeToGoUp = 1500;
+                this.deltaXX = 0;
+                this.animations.add('fireballAnimation', null, 10, true);
+                this.anchor.setTo(0.5, 0.75);
+                game.add.existing(this);
+                this.phase = PhaseEnum.Idle;
+                this.posInitialX = x;
+                this.posInitialY = y;
+                this.isHitOnGround = false;
+                this.hideMe();
+            }
+            Fireball.prototype.update = function () {
             };
-            return Billboard;
-        })(Phaser.Sprite);
-        Client.Billboard = Billboard;
+            Fireball.prototype.goUp = function () {
+                this.deltaXX = 250 * (Math.random() - 0.5);
+                this.scale.setTo(0.0, 0.0);
+                var tweenUp = this.game.add.tween(this).to({ x: this.x + this.deltaXX, y: this.y - 220 }, this.timeToGoUp, Phaser.Easing.Quadratic.Out, true);
+                tweenUp.onComplete.add(this.fallDown, this);
+                var tweenResize = this.game.add.tween(this.scale).to({ x: 0.3, y: 0.3 }, this.timeToGoUp, Phaser.Easing.Linear.None, true);
+            };
+            Fireball.prototype.fallDown = function () {
+                this.phase = PhaseEnum.FallingDown;
+                var tweenUp = this.game.add.tween(this).to({ x: this.x + this.deltaXX * 4, y: this.y + 490 }, this.timeToGoUp, Phaser.Easing.Quadratic.In, true);
+                tweenUp.onComplete.add(this.hitOnGround, this);
+                var tweenResize = this.game.add.tween(this.scale).to({ x: 1.0, y: 1.0 }, this.timeToGoUp, Phaser.Easing.Linear.None, true);
+            };
+            Fireball.prototype.hitOnGround = function () {
+                this.game.add.audio('soundCannonFall', 1, false).play();
+                this.isHitOnGround = true;
+            };
+            Fireball.prototype.checkHitOnGround = function () {
+                if (this.isHitOnGround) {
+                    this.isHitOnGround = false;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            };
+            Fireball.prototype.hideMe = function () {
+                this.phase = PhaseEnum.Idle;
+                this.position.setTo(this.posInitialX, this.posInitialY);
+                this.scale.setTo(0, 0);
+                this.visible = false;
+                this.animations.stop('fireballAnimation');
+            };
+            Fireball.prototype.erupt = function () {
+                this.animations.play('fireballAnimation');
+                this.position.setTo(this.posInitialX, this.posInitialY);
+                this.visible = true;
+                this.phase = PhaseEnum.GoingUp;
+                this.goUp();
+            };
+            Fireball.decreaseDurationForNewFireball = function () {
+                if (this.durationForNewFireball - this.deltaDurationForNewFireball > this.minDurationForNewFireball)
+                    this.durationForNewFireball -= this.deltaDurationForNewFireball;
+            };
+            Fireball.maxFireballs = 10;
+            Fireball.durationForNewFireball = 2500;
+            Fireball.deltaDurationForNewFireball = 40;
+            Fireball.minDurationForNewFireball = 750;
+            return Fireball;
+        }(Phaser.Sprite));
+        Client.Fireball = Fireball;
+    })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
+})(FirstPhaser || (FirstPhaser = {}));
+var FirstPhaser;
+(function (FirstPhaser) {
+    var Client;
+    (function (Client) {
+        var LeftOrRightEnum;
+        (function (LeftOrRightEnum) {
+            LeftOrRightEnum[LeftOrRightEnum["Left"] = 0] = "Left";
+            LeftOrRightEnum[LeftOrRightEnum["Right"] = 1] = "Right";
+        })(LeftOrRightEnum || (LeftOrRightEnum = {}));
+        var Cloud = (function (_super) {
+            __extends(Cloud, _super);
+            function Cloud(game) {
+                var strCloudImageName = '';
+                if (game.rnd.sign() == -1)
+                    strCloudImageName = 'imgCloudSmall';
+                else
+                    strCloudImageName = 'imgCloudLarge';
+                _super.call(this, game, 0, 0, strCloudImageName);
+                if (game.rnd.sign() == -1) {
+                    this.leftOrRight = LeftOrRightEnum.Left;
+                    this.velocity = game.rnd.between(0, 5);
+                }
+                else {
+                    this.leftOrRight = LeftOrRightEnum.Right;
+                    this.velocity = -game.rnd.between(0, 5);
+                }
+                this.x = game.rnd.between(0, game.width);
+                this.y = game.rnd.between(0, game.height / 2);
+                this.anchor.setTo(0.5);
+                this.alpha = 0.5 + game.rnd.realInRange(0, 0.1 * this.velocity);
+                if (game.rnd.sign() == -1)
+                    this.scale.x = -1;
+                else
+                    this.scale.x = 1;
+                game.add.existing(this);
+                game.physics.enable(this);
+                this.body.collideWorldBounds = false;
+                this.body.setCircle(20);
+                this.body.velocity.x = this.velocity;
+            }
+            Cloud.prototype.update = function () {
+            };
+            return Cloud;
+        }(Phaser.Sprite));
+        Client.Cloud = Cloud;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
 var FirstPhaser;
@@ -155,7 +264,7 @@ var FirstPhaser;
                 this.posInitialY = pos.y;
             };
             return Cannon;
-        })(Phaser.Sprite);
+        }(Phaser.Sprite));
         Client.Cannon = Cannon;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
@@ -163,47 +272,135 @@ var FirstPhaser;
 (function (FirstPhaser) {
     var Client;
     (function (Client) {
-        var LeftOrRightEnum;
-        (function (LeftOrRightEnum) {
-            LeftOrRightEnum[LeftOrRightEnum["Left"] = 0] = "Left";
-            LeftOrRightEnum[LeftOrRightEnum["Right"] = 1] = "Right";
-        })(LeftOrRightEnum || (LeftOrRightEnum = {}));
-        var Cloud = (function (_super) {
-            __extends(Cloud, _super);
-            function Cloud(game) {
-                var strCloudImageName = '';
-                if (game.rnd.sign() == -1)
-                    strCloudImageName = 'imgCloudSmall';
+        (function (BillboardTypeEnum) {
+            BillboardTypeEnum[BillboardTypeEnum["Lives"] = 0] = "Lives";
+            BillboardTypeEnum[BillboardTypeEnum["Points"] = 1] = "Points";
+        })(Client.BillboardTypeEnum || (Client.BillboardTypeEnum = {}));
+        var BillboardTypeEnum = Client.BillboardTypeEnum;
+        var Billboard = (function (_super) {
+            __extends(Billboard, _super);
+            function Billboard(game, pos, billboardType) {
+                if (billboardType == BillboardTypeEnum.Lives)
+                    _super.call(this, game, pos.x, pos.y, 'imgBGLives');
                 else
-                    strCloudImageName = 'imgCloudLarge';
-                _super.call(this, game, 0, 0, strCloudImageName);
-                if (game.rnd.sign() == -1) {
-                    this.leftOrRight = LeftOrRightEnum.Left;
-                    this.velocity = game.rnd.between(0, 5);
-                }
-                else {
-                    this.leftOrRight = LeftOrRightEnum.Right;
-                    this.velocity = -game.rnd.between(0, 5);
-                }
-                this.x = game.rnd.between(0, game.width);
-                this.y = game.rnd.between(0, game.height / 2);
-                this.anchor.setTo(0.5);
-                this.alpha = 0.5 + game.rnd.realInRange(0, 0.1 * this.velocity);
-                if (game.rnd.sign() == -1)
-                    this.scale.x = -1;
-                else
-                    this.scale.x = 1;
+                    _super.call(this, game, pos.x, pos.y, 'imgBGPoints');
                 game.add.existing(this);
+                this.anchor.set(0.5);
+                this.txt = this.game.add.text(pos.x + 20, pos.y, "", { font: "bold 32px Arial", fill: "#FFFFFF", align: "center" });
+                this.txt.anchor.setTo(0.5);
+                this.value = 0;
+            }
+            Billboard.prototype.update = function () {
+            };
+            Billboard.prototype.enlarge = function () {
+                var normEnlarge = 300;
+                var durationEnlarge = normEnlarge + normEnlarge * 0.25 * (Math.random() - 0.5);
+                var normShrink = 500;
+                var durationShrink = normShrink + normShrink * 0.25 * (Math.random() - 0.5);
+                var tween = this.game.add.tween(this.scale).to({ x: 1.1, y: 1.1 }, durationEnlarge, Phaser.Easing.Bounce.In, true);
+                tween.onComplete.add(function () { this.game.add.tween(this.scale).to({ x: 1, y: 1 }, durationShrink, Phaser.Easing.Elastic.Out, true); }, this);
+                var tweenText = this.game.add.tween(this.txt.scale).to({ x: 1.1, y: 1.1 }, durationEnlarge, Phaser.Easing.Bounce.In, true);
+                tweenText.onComplete.add(function () { this.game.add.tween(this.txt.scale).to({ x: 1, y: 1 }, durationShrink, Phaser.Easing.Elastic.Out, true); }, this);
+            };
+            Billboard.prototype.changeValue = function (newValue, isAnimate) {
+                this.value = newValue;
+                this.txt.setText(this.value.toString());
+                if (isAnimate)
+                    this.enlarge();
+            };
+            return Billboard;
+        }(Phaser.Sprite));
+        Client.Billboard = Billboard;
+    })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
+})(FirstPhaser || (FirstPhaser = {}));
+var FirstPhaser;
+(function (FirstPhaser) {
+    var Client;
+    (function (Client) {
+        var MovingToLeftOrRightEnum;
+        (function (MovingToLeftOrRightEnum) {
+            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["NA"] = 0] = "NA";
+            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Left"] = 1] = "Left";
+            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Stopping"] = 2] = "Stopping";
+            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Right"] = 3] = "Right";
+        })(MovingToLeftOrRightEnum || (MovingToLeftOrRightEnum = {}));
+        var Rhino = (function (_super) {
+            __extends(Rhino, _super);
+            function Rhino(game, posInit) {
+                _super.call(this, game, posInit.x, posInit.y, 'RhinoSpriteSheet', 1);
+                this.normDurationForStopping = 2000;
+                this.normVelocity = 50;
+                this.animations.add('rhinoWalking', [5, 6, 7], 4, true);
+                this.animations.add('rhinoStopping', [1, 2, 3, 4], 4, true);
+                game.add.existing(this);
+                this.anchor.set(0.5, 1);
+                this.visible = false;
                 game.physics.enable(this);
                 this.body.collideWorldBounds = false;
                 this.body.setCircle(20);
-                this.body.velocity.x = this.velocity;
+                this.body.velocity.x = 0;
+                this.statusText = this.game.add.text(5, this.game.world.height / 2, "Rhino", { font: "12px Arial", fill: "#FFFFFF", align: "center" });
+                this.statusText.anchor.setTo(0, 0.5);
+                this.initRhino();
             }
-            Cloud.prototype.update = function () {
+            Rhino.prototype.update = function () {
+                this.statusText.setText("Rhino : " + this.movingToLeftOrRight.toString() + " LOC=" + Math.round(this.x) + "x" + Math.round(this.y));
+                if (this.x < 0 || this.x > this.game.width)
+                    this.restart();
             };
-            return Cloud;
-        })(Phaser.Sprite);
-        Client.Cloud = Cloud;
+            Rhino.prototype.initRhino = function () {
+                this.scale.x = 1;
+                this.y = 470;
+                this.x = 0;
+                this.stop();
+            };
+            Rhino.prototype.isStoppingNow = function () { return this.movingToLeftOrRight == MovingToLeftOrRightEnum.Stopping; };
+            Rhino.prototype.giveLife = function () {
+                if (!this.visible) {
+                    this.visible = true;
+                    this.scale.x = 1;
+                    this.movingToLeftOrRight = MovingToLeftOrRightEnum.Right;
+                    this.body.velocity.x = this.normVelocity;
+                    this.animations.play('rhinoWalking');
+                }
+            };
+            Rhino.prototype.stop = function () {
+                this.movingToLeftOrRight = MovingToLeftOrRightEnum.Stopping;
+                this.body.velocity.x = 0;
+                this.animations.stop('rhinoWalking');
+                this.animations.play('rhinoStopping');
+            };
+            Rhino.prototype.restart = function () {
+                if (this.scale.x > 0) {
+                    if (this.x > 0.75 * this.game.width) {
+                        this.scale.x = -1;
+                        this.movingToLeftOrRight == MovingToLeftOrRightEnum.Left;
+                    }
+                }
+                else {
+                    if (this.x < 0.25 * this.game.width) {
+                        this.movingToLeftOrRight == MovingToLeftOrRightEnum.Right;
+                        this.scale.x = 1;
+                    }
+                }
+                this.body.velocity.x = this.scale.x * this.normVelocity;
+                this.animations.stop('rhinoStopping');
+                this.animations.play('rhinoWalking');
+            };
+            Rhino.prototype.turnAroundAndMove = function () {
+                if (this.scale.x > 0) {
+                    this.scale.x = -1;
+                    this.movingToLeftOrRight = MovingToLeftOrRightEnum.Left;
+                }
+                else {
+                    this.scale.x = 1;
+                    this.movingToLeftOrRight = MovingToLeftOrRightEnum.Right;
+                }
+                this.body.velocity.x = this.scale.x * this.normVelocity;
+            };
+            return Rhino;
+        }(Phaser.Sprite));
+        Client.Rhino = Rhino;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
 var FirstPhaser;
@@ -212,105 +409,133 @@ var FirstPhaser;
     (function (Client) {
         var PhaseEnum;
         (function (PhaseEnum) {
-            PhaseEnum[PhaseEnum["Idle"] = 0] = "Idle";
-            PhaseEnum[PhaseEnum["GoingUp"] = 1] = "GoingUp";
-            PhaseEnum[PhaseEnum["FallingDown"] = 2] = "FallingDown";
+            PhaseEnum[PhaseEnum["Hidden"] = 0] = "Hidden";
+            PhaseEnum[PhaseEnum["Moving"] = 1] = "Moving";
+            PhaseEnum[PhaseEnum["Stopping"] = 2] = "Stopping";
+            PhaseEnum[PhaseEnum["Shooting"] = 3] = "Shooting";
+            PhaseEnum[PhaseEnum["ShotComplete"] = 4] = "ShotComplete";
         })(PhaseEnum || (PhaseEnum = {}));
-        var Fireball = (function (_super) {
-            __extends(Fireball, _super);
-            function Fireball(game, x, y) {
-                _super.call(this, game, x, y, 'FireballSprite', 1);
-                this.timeToGoUp = 1500;
-                this.deltaXX = 0;
-                this.animations.add('fireballAnimation', null, 10, true);
-                this.anchor.setTo(0.5, 0.75);
+        var JeepFoo = (function (_super) {
+            __extends(JeepFoo, _super);
+            function JeepFoo(game) {
+                _super.call(this, game, 0, 0, 'imgJeepFoo');
+                this.minVelocity = 50;
                 game.add.existing(this);
-                this.phase = PhaseEnum.Idle;
-                this.posInitialX = x;
-                this.posInitialY = y;
-                this.isHitOnGround = false;
-                this.hideMe();
+                this.anchor.set(0.5, 1);
+                this.phase = PhaseEnum.Hidden;
+                game.physics.enable(this);
+                this.body.collideWorldBounds = false;
+                this.body.setCircle(20);
+                this.body.velocity.x = 0;
+                this.scale.x = 1;
             }
-            Fireball.prototype.update = function () {
+            JeepFoo.prototype.update = function () {
+                if (this.phase == PhaseEnum.Moving && Math.abs(this.body.velocity.x) < this.minVelocity) {
+                    this.body.acceleration.x = 0;
+                    this.body.velocity.x = this.minVelocity * this.scale.x;
+                }
             };
-            Fireball.prototype.goUp = function () {
-                this.deltaXX = 250 * (Math.random() - 0.5);
-                this.scale.setTo(0.0, 0.0);
-                var tweenUp = this.game.add.tween(this).to({ x: this.x + this.deltaXX, y: this.y - 220 }, this.timeToGoUp, Phaser.Easing.Quadratic.Out, true);
-                tweenUp.onComplete.add(this.fallDown, this);
-                var tweenResize = this.game.add.tween(this.scale).to({ x: 0.3, y: 0.3 }, this.timeToGoUp, Phaser.Easing.Linear.None, true);
-            };
-            Fireball.prototype.fallDown = function () {
-                this.phase = PhaseEnum.FallingDown;
-                var tweenUp = this.game.add.tween(this).to({ x: this.x + this.deltaXX * 4, y: this.y + 490 }, this.timeToGoUp, Phaser.Easing.Quadratic.In, true);
-                tweenUp.onComplete.add(this.hitOnGround, this);
-                var tweenResize = this.game.add.tween(this.scale).to({ x: 1.0, y: 1.0 }, this.timeToGoUp, Phaser.Easing.Linear.None, true);
-            };
-            Fireball.prototype.hitOnGround = function () {
-                this.game.add.audio('soundCannonFall', 1, false).play();
-                this.isHitOnGround = true;
-            };
-            Fireball.prototype.checkHitOnGround = function () {
-                if (this.isHitOnGround) {
-                    this.isHitOnGround = false;
-                    return true;
+            JeepFoo.prototype.showMe = function (rhino) {
+                var velocity = 90 + Math.random() * 45;
+                var acceleration = 10;
+                if (rhino.x < this.game.width / 2) {
+                    this.x = this.game.width;
+                    this.body.velocity.x = -velocity;
+                    this.body.acceleration.x = acceleration;
+                    this.scale.x = -1;
                 }
                 else {
-                    return false;
+                    this.x = 0;
+                    this.body.velocity.x = velocity;
+                    this.body.acceleration.x = -acceleration;
+                    this.scale.x = 1;
                 }
-            };
-            Fireball.prototype.hideMe = function () {
-                this.phase = PhaseEnum.Idle;
-                this.position.setTo(this.posInitialX, this.posInitialY);
-                this.scale.setTo(0, 0);
-                this.visible = false;
-                this.animations.stop('fireballAnimation');
-            };
-            Fireball.prototype.erupt = function () {
-                this.animations.play('fireballAnimation');
-                this.position.setTo(this.posInitialX, this.posInitialY);
+                if (rhino.scale.x * this.scale.x > 0)
+                    rhino.turnAroundAndMove();
+                this.y = 450;
                 this.visible = true;
-                this.phase = PhaseEnum.GoingUp;
-                this.goUp();
+                this.phase = PhaseEnum.Moving;
+                this.vicinityToRhino = 200 + 100 * Math.random();
             };
-            Fireball.decreaseDurationForNewFireball = function () {
-                if (this.durationForNewFireball - this.deltaDurationForNewFireball > this.minDurationForNewFireball)
-                    this.durationForNewFireball -= this.deltaDurationForNewFireball;
+            JeepFoo.prototype.hideMe = function () {
+                this.x = this.game.width;
+                this.visible = false;
+                this.body.velocity.x = 0;
+                this.body.acceleration.x = 0;
+                this.phase = PhaseEnum.Hidden;
             };
-            Fireball.maxFireballs = 10;
-            Fireball.durationForNewFireball = 2500;
-            Fireball.deltaDurationForNewFireball = 40;
-            Fireball.minDurationForNewFireball = 750;
-            return Fireball;
-        })(Phaser.Sprite);
-        Client.Fireball = Fireball;
+            JeepFoo.prototype.stopToPrepareShooting = function (rhino) {
+                var _this = this;
+                this.body.velocity.x = 0;
+                this.body.acceleration.x = 0;
+                this.phase = PhaseEnum.Stopping;
+                setTimeout(function () { return _this.shoot(); }, 5000);
+                rhino.stop();
+            };
+            JeepFoo.prototype.shoot = function () {
+                if (this.phase == PhaseEnum.Stopping)
+                    this.phase = PhaseEnum.Shooting;
+            };
+            JeepFoo.prototype.isMoving = function () { return this.phase == PhaseEnum.Moving; };
+            JeepFoo.prototype.isShooting = function () { return this.phase == PhaseEnum.Shooting; };
+            return JeepFoo;
+        }(Phaser.Sprite));
+        Client.JeepFoo = JeepFoo;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
 var FirstPhaser;
 (function (FirstPhaser) {
     var Client;
     (function (Client) {
-        var GameOver = (function (_super) {
-            __extends(GameOver, _super);
-            function GameOver(game) {
-                _super.call(this, game, game.width / 2, game.height / 2, 'imgGameOver');
+        var Volcano = (function (_super) {
+            __extends(Volcano, _super);
+            function Volcano(game, x, y) {
+                _super.call(this, game, 0, 0);
                 game.add.existing(this);
-                this.anchor.set(0.5);
-                this.visible = false;
+                this.volcanoCrest = new Phaser.Sprite(game, x, y, 'imgVolcanoCrest');
+                this.volcanoCrest.anchor.setTo(0.5, 1);
+                this.volcanoSmoke = new Phaser.Sprite(game, x, y - this.volcanoCrest.height, 'imgVolcanoSmoke');
+                this.volcanoSmoke.anchor.set(0, 1);
+                this.addChild(this.volcanoCrest);
+                this.addChild(this.volcanoSmoke);
+                this.smokeFadeOut();
             }
-            GameOver.prototype.update = function () {
+            Volcano.prototype.update = function () {
             };
-            GameOver.prototype.showAndAnimate = function () {
-                this.scale.setTo(0.5, 0.5);
-                this.visible = true;
-                var durationEnlarge = 500;
-                var durationShrink = 1000;
-                var tween = this.game.add.tween(this.scale).to({ x: 1.2, y: 1.2 }, durationEnlarge, Phaser.Easing.Cubic.In, true);
-                tween.onComplete.add(function () { this.game.add.tween(this.scale).to({ x: 1, y: 1 }, durationShrink, Phaser.Easing.Elastic.Out, true); }, this);
+            Volcano.prototype.smokeFadeIn = function () {
+                var tween = this.game.add.tween(this.volcanoSmoke).to({ alpha: 1 }, 5000, Phaser.Easing.Linear.None, true);
+                tween.onComplete.add(this.smokeFadeOut, this);
             };
-            return GameOver;
-        })(Phaser.Sprite);
-        Client.GameOver = GameOver;
+            Volcano.prototype.smokeFadeOut = function () {
+                var tween = this.game.add.tween(this.volcanoSmoke).to({ alpha: 0 }, 5000, Phaser.Easing.Linear.None, true);
+                tween.onComplete.add(this.smokeFadeIn, this);
+            };
+            Volcano.prototype.isInArea = function (x, y) {
+                if (x > this.volcanoCrest.left
+                    && x < this.volcanoCrest.right
+                    && y > this.volcanoCrest.top
+                    && y < this.volcanoCrest.bottom)
+                    return true;
+                else
+                    return false;
+            };
+            Volcano.prototype.tickleMe = function (x, y) {
+                if (this.isInArea(x, y)) {
+                    var tween = this.game.add.tween(this.volcanoCrest.scale).to({ x: 1.05, y: 1.15 }, 200, Phaser.Easing.Bounce.In, true);
+                    tween.onComplete.add(this.releaseTickle, this);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            };
+            Volcano.prototype.releaseTickle = function () {
+                this.game.add.tween(this.volcanoCrest.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
+            };
+            Volcano.prototype.getFireballLocation = function () { return new Phaser.Point(this.volcanoCrest.x, this.volcanoCrest.y - this.volcanoCrest.height + 50); };
+            return Volcano;
+        }(Phaser.Sprite));
+        Client.Volcano = Volcano;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
 var FirstPhaser;
@@ -409,88 +634,8 @@ var FirstPhaser;
                 this.explosion.alpha = 1;
             };
             return Jeep;
-        })(Phaser.Sprite);
+        }(Phaser.Sprite));
         Client.Jeep = Jeep;
-    })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
-})(FirstPhaser || (FirstPhaser = {}));
-var FirstPhaser;
-(function (FirstPhaser) {
-    var Client;
-    (function (Client) {
-        var PhaseEnum;
-        (function (PhaseEnum) {
-            PhaseEnum[PhaseEnum["Hidden"] = 0] = "Hidden";
-            PhaseEnum[PhaseEnum["Moving"] = 1] = "Moving";
-            PhaseEnum[PhaseEnum["Stopping"] = 2] = "Stopping";
-            PhaseEnum[PhaseEnum["Shooting"] = 3] = "Shooting";
-            PhaseEnum[PhaseEnum["ShotComplete"] = 4] = "ShotComplete";
-        })(PhaseEnum || (PhaseEnum = {}));
-        var JeepFoo = (function (_super) {
-            __extends(JeepFoo, _super);
-            function JeepFoo(game) {
-                _super.call(this, game, 0, 0, 'imgJeepFoo');
-                this.minVelocity = 50;
-                game.add.existing(this);
-                this.anchor.set(0.5, 1);
-                this.phase = PhaseEnum.Hidden;
-                game.physics.enable(this);
-                this.body.collideWorldBounds = false;
-                this.body.setCircle(20);
-                this.body.velocity.x = 0;
-                this.scale.x = 1;
-            }
-            JeepFoo.prototype.update = function () {
-                if (this.phase == PhaseEnum.Moving && Math.abs(this.body.velocity.x) < this.minVelocity) {
-                    this.body.acceleration.x = 0;
-                    this.body.velocity.x = this.minVelocity * this.scale.x;
-                }
-            };
-            JeepFoo.prototype.showMe = function (rhino) {
-                var velocity = 90 + Math.random() * 45;
-                var acceleration = 10;
-                if (rhino.x < this.game.width / 2) {
-                    this.x = this.game.width;
-                    this.body.velocity.x = -velocity;
-                    this.body.acceleration.x = acceleration;
-                    this.scale.x = -1;
-                }
-                else {
-                    this.x = 0;
-                    this.body.velocity.x = velocity;
-                    this.body.acceleration.x = -acceleration;
-                    this.scale.x = 1;
-                }
-                if (rhino.scale.x * this.scale.x > 0)
-                    rhino.turnAroundAndMove();
-                this.y = 450;
-                this.visible = true;
-                this.phase = PhaseEnum.Moving;
-                this.vicinityToRhino = 200 + 100 * Math.random();
-            };
-            JeepFoo.prototype.hideMe = function () {
-                this.x = this.game.width;
-                this.visible = false;
-                this.body.velocity.x = 0;
-                this.body.acceleration.x = 0;
-                this.phase = PhaseEnum.Hidden;
-            };
-            JeepFoo.prototype.stopToPrepareShooting = function (rhino) {
-                var _this = this;
-                this.body.velocity.x = 0;
-                this.body.acceleration.x = 0;
-                this.phase = PhaseEnum.Stopping;
-                setTimeout(function () { return _this.shoot(); }, 5000);
-                rhino.stop();
-            };
-            JeepFoo.prototype.shoot = function () {
-                if (this.phase == PhaseEnum.Stopping)
-                    this.phase = PhaseEnum.Shooting;
-            };
-            JeepFoo.prototype.isMoving = function () { return this.phase == PhaseEnum.Moving; };
-            JeepFoo.prototype.isShooting = function () { return this.phase == PhaseEnum.Shooting; };
-            return JeepFoo;
-        })(Phaser.Sprite);
-        Client.JeepFoo = JeepFoo;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
 var FirstPhaser;
@@ -531,7 +676,7 @@ var FirstPhaser;
                 }
             };
             return Player;
-        })(Phaser.Sprite);
+        }(Phaser.Sprite));
         Client.Player = Player;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
@@ -539,145 +684,36 @@ var FirstPhaser;
 (function (FirstPhaser) {
     var Client;
     (function (Client) {
-        var MovingToLeftOrRightEnum;
-        (function (MovingToLeftOrRightEnum) {
-            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["NA"] = 0] = "NA";
-            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Left"] = 1] = "Left";
-            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Stopping"] = 2] = "Stopping";
-            MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Right"] = 3] = "Right";
-        })(MovingToLeftOrRightEnum || (MovingToLeftOrRightEnum = {}));
-        var Rhino = (function (_super) {
-            __extends(Rhino, _super);
-            function Rhino(game, posInit) {
-                _super.call(this, game, posInit.x, posInit.y, 'RhinoSpriteSheet', 1);
-                this.normDurationForStopping = 2000;
-                this.normVelocity = 50;
-                this.animations.add('rhinoWalking', [5, 6, 7], 4, true);
-                this.animations.add('rhinoStopping', [1, 2, 3, 4], 4, true);
-                game.add.existing(this);
-                this.anchor.set(0.5, 1);
-                this.visible = false;
-                game.physics.enable(this);
-                this.body.collideWorldBounds = false;
-                this.body.setCircle(20);
-                this.body.velocity.x = 0;
-                this.statusText = this.game.add.text(5, this.game.world.height / 2, "Rhino", { font: "12px Arial", fill: "#FFFFFF", align: "center" });
-                this.statusText.anchor.setTo(0, 0.5);
-                this.initRhino();
+        var Boot = (function (_super) {
+            __extends(Boot, _super);
+            function Boot() {
+                _super.apply(this, arguments);
             }
-            Rhino.prototype.update = function () {
-                this.statusText.setText("Rhino : " + this.movingToLeftOrRight.toString() + " LOC=" + Math.round(this.x) + "x" + Math.round(this.y));
-                if (this.x < 0 || this.x > this.game.width)
-                    this.restart();
+            Boot.prototype.preload = function () {
             };
-            Rhino.prototype.initRhino = function () {
-                this.scale.x = 1;
-                this.y = 470;
-                this.x = 0;
-                this.stop();
-            };
-            Rhino.prototype.isStoppingNow = function () { return this.movingToLeftOrRight == MovingToLeftOrRightEnum.Stopping; };
-            Rhino.prototype.giveLife = function () {
-                if (!this.visible) {
-                    this.visible = true;
-                    this.scale.x = 1;
-                    this.movingToLeftOrRight = MovingToLeftOrRightEnum.Right;
-                    this.body.velocity.x = this.normVelocity;
-                    this.animations.play('rhinoWalking');
-                }
-            };
-            Rhino.prototype.stop = function () {
-                this.movingToLeftOrRight = MovingToLeftOrRightEnum.Stopping;
-                this.body.velocity.x = 0;
-                this.animations.stop('rhinoWalking');
-                this.animations.play('rhinoStopping');
-            };
-            Rhino.prototype.restart = function () {
-                if (this.scale.x > 0) {
-                    if (this.x > 0.75 * this.game.width) {
-                        this.scale.x = -1;
-                        this.movingToLeftOrRight == MovingToLeftOrRightEnum.Left;
-                    }
+            Boot.prototype.create = function () {
+                statusbar.visible = false;
+                this.stage.setBackgroundColor(0xFFFFFF);
+                this.input.maxPointers = 1;
+                this.stage.disableVisibilityChange = true;
+                if (this.game.device.desktop) {
+                    this.scale.pageAlignHorizontally = true;
                 }
                 else {
-                    if (this.x < 0.25 * this.game.width) {
-                        this.movingToLeftOrRight == MovingToLeftOrRightEnum.Right;
-                        this.scale.x = 1;
-                    }
+                    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+                    this.scale.minWidth = 480;
+                    this.scale.minHeight = 260;
+                    this.scale.maxWidth = 1024;
+                    this.scale.maxHeight = 768;
+                    this.scale.forceLandscape = true;
+                    this.scale.pageAlignHorizontally = true;
+                    this.scale.refresh();
                 }
-                this.body.velocity.x = this.scale.x * this.normVelocity;
-                this.animations.stop('rhinoStopping');
-                this.animations.play('rhinoWalking');
+                this.game.state.start('Preloader', true, false);
             };
-            Rhino.prototype.turnAroundAndMove = function () {
-                if (this.scale.x > 0) {
-                    this.scale.x = -1;
-                    this.movingToLeftOrRight = MovingToLeftOrRightEnum.Left;
-                }
-                else {
-                    this.scale.x = 1;
-                    this.movingToLeftOrRight = MovingToLeftOrRightEnum.Right;
-                }
-                this.body.velocity.x = this.scale.x * this.normVelocity;
-            };
-            return Rhino;
-        })(Phaser.Sprite);
-        Client.Rhino = Rhino;
-    })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
-})(FirstPhaser || (FirstPhaser = {}));
-var FirstPhaser;
-(function (FirstPhaser) {
-    var Client;
-    (function (Client) {
-        var Volcano = (function (_super) {
-            __extends(Volcano, _super);
-            function Volcano(game, x, y) {
-                _super.call(this, game, 0, 0);
-                game.add.existing(this);
-                this.volcanoCrest = new Phaser.Sprite(game, x, y, 'imgVolcanoCrest');
-                this.volcanoCrest.anchor.setTo(0.5, 1);
-                this.volcanoSmoke = new Phaser.Sprite(game, x, y - this.volcanoCrest.height, 'imgVolcanoSmoke');
-                this.volcanoSmoke.anchor.set(0, 1);
-                this.addChild(this.volcanoCrest);
-                this.addChild(this.volcanoSmoke);
-                this.smokeFadeOut();
-            }
-            Volcano.prototype.update = function () {
-            };
-            Volcano.prototype.smokeFadeIn = function () {
-                var tween = this.game.add.tween(this.volcanoSmoke).to({ alpha: 1 }, 5000, Phaser.Easing.Linear.None, true);
-                tween.onComplete.add(this.smokeFadeOut, this);
-            };
-            Volcano.prototype.smokeFadeOut = function () {
-                var tween = this.game.add.tween(this.volcanoSmoke).to({ alpha: 0 }, 5000, Phaser.Easing.Linear.None, true);
-                tween.onComplete.add(this.smokeFadeIn, this);
-            };
-            Volcano.prototype.isInArea = function (x, y) {
-                if (x > this.volcanoCrest.left
-                    && x < this.volcanoCrest.right
-                    && y > this.volcanoCrest.top
-                    && y < this.volcanoCrest.bottom)
-                    return true;
-                else
-                    return false;
-            };
-            Volcano.prototype.tickleMe = function (x, y) {
-                if (this.isInArea(x, y)) {
-                    var tween = this.game.add.tween(this.volcanoCrest.scale).to({ x: 1.05, y: 1.15 }, 200, Phaser.Easing.Bounce.In, true);
-                    tween.onComplete.add(this.releaseTickle, this);
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            };
-            Volcano.prototype.releaseTickle = function () {
-                this.game.add.tween(this.volcanoCrest.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
-            };
-            Volcano.prototype.getFireballLocation = function () { return new Phaser.Point(this.volcanoCrest.x, this.volcanoCrest.y - this.volcanoCrest.height + 50); };
-            return Volcano;
-        })(Phaser.Sprite);
-        Client.Volcano = Volcano;
+            return Boot;
+        }(Phaser.State));
+        Client.Boot = Boot;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
 var FirstPhaser;
@@ -992,43 +1028,8 @@ var FirstPhaser;
                 setTimeout(function () { return _this.createRandomFireball(); }, Client.Fireball.durationForNewFireball);
             };
             return Action;
-        })(Phaser.State);
+        }(Phaser.State));
         Client.Action = Action;
-    })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
-})(FirstPhaser || (FirstPhaser = {}));
-var FirstPhaser;
-(function (FirstPhaser) {
-    var Client;
-    (function (Client) {
-        var Boot = (function (_super) {
-            __extends(Boot, _super);
-            function Boot() {
-                _super.apply(this, arguments);
-            }
-            Boot.prototype.preload = function () {
-            };
-            Boot.prototype.create = function () {
-                this.stage.setBackgroundColor(0xFFFFFF);
-                this.input.maxPointers = 1;
-                this.stage.disableVisibilityChange = true;
-                if (this.game.device.desktop) {
-                    this.scale.pageAlignHorizontally = true;
-                }
-                else {
-                    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-                    this.scale.minWidth = 480;
-                    this.scale.minHeight = 260;
-                    this.scale.maxWidth = 1024;
-                    this.scale.maxHeight = 768;
-                    this.scale.forceLandscape = true;
-                    this.scale.pageAlignHorizontally = true;
-                    this.scale.refresh();
-                }
-                this.game.state.start('Preloader', true, false);
-            };
-            return Boot;
-        })(Phaser.State);
-        Client.Boot = Boot;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
 var FirstPhaser;
@@ -1054,7 +1055,7 @@ var FirstPhaser;
                 this.footerText.setText(this.game.rnd.integerInRange(1, 100).toString());
             };
             return Level01;
-        })(Phaser.State);
+        }(Phaser.State));
         Client.Level01 = Level01;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
@@ -1087,7 +1088,7 @@ var FirstPhaser;
                 this.game.state.start('Action', true, false);
             };
             return MainMenu;
-        })(Phaser.State);
+        }(Phaser.State));
         Client.MainMenu = MainMenu;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));
@@ -1144,7 +1145,7 @@ var FirstPhaser;
                 this.game.state.start('Action', true, false);
             };
             return Preloader;
-        })(Phaser.State);
+        }(Phaser.State));
         Client.Preloader = Preloader;
     })(Client = FirstPhaser.Client || (FirstPhaser.Client = {}));
 })(FirstPhaser || (FirstPhaser = {}));

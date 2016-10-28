@@ -6,6 +6,8 @@
         }
 
         create() {
+            statusbar.visible = false;
+
             this.stage.setBackgroundColor(0xFFFFFF);
 
             this.input.maxPointers = 1;
@@ -26,7 +28,7 @@
                 this.scale.pageAlignHorizontally = true;
                 this.scale.refresh();
             }
-
+            
             this.game.state.start('Preloader', true, false);
         }
     }
