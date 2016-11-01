@@ -8,7 +8,7 @@
         create() {
             statusbar.visible = false;
 
-            this.stage.setBackgroundColor(0xFFFFFF);
+            this.stage.setBackgroundColor(0x000000);
 
             this.input.maxPointers = 1;
             this.stage.disableVisibilityChange = true;
