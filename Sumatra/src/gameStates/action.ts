@@ -370,7 +370,7 @@
         private createRandomFireball() {
            
             // WARNING --- REMOVE THIS false BELOW
-            if (false && this.gameState == GameStateEnum.Running) {
+            if (this.gameState == GameStateEnum.Running) {
                 for (var i = 0; i < this.fireballs.length; i++) {
                     if (this.fireballs[i].visible == false) {
                         this.fireballs[i].erupt();

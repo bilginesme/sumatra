@@ -6,7 +6,7 @@
         }
 
         create() {
-            statusbar.visible = false;
+          
 
             this.stage.setBackgroundColor(0x000000);
 
